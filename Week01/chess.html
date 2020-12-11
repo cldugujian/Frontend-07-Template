@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>井字棋</title>
+    <style>
+        *{
+            box-sizing: border-box;
+        }
+        .chess{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            position: fixed;
+            top:50%;
+            left:50%;
+            width:300px;
+            border-top:1px solid #ccc;
+            border-left:1px solid #ccc;
+            transform: translate(-50%,-50%);
+        }
+        .chess span{
+            display: block;
+            width:33.3%;
+            height:100px;
+            color:#333;
+            font-size:40px;
+            text-align: center;
+            line-height:100px;
+            border-right:1px solid #ccc;
+            border-bottom:1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="chess">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+</body>
+</html>
+
+<script>
+
+    // 一个 X 记为 1 - 如果相加之和是 3 ，则 X 胜
+    // 一个 O 记为 10 - 如果相加之和是 30 ，则 O 胜
+
+    // 获取棋盘元素
+    let chessEl = document.getElementsByClassName('chess')[0];
+    let spanEl = chessEl.getElementsByTagName('span');
+
+    // 设置指针 - 用于切换对手
+    let flagPlayer = true;
+    // 设置指针 - 用于判断是否可以继续下棋
+    let flagOver = false;
+
+    // 棋盘初始化
+    let chessArr = [
+        [0,0,0],
+        [0,0,0],
+        [0,0,0],
+    ];
+
+    // 绑定点击事件
+    chessEl.addEventListener('click',function (e) {
+        // 获取点击的索引号
+        let index = getSpanIndex(e.target);
+        // 根据索引号下棋
+        putByIndex(index);
+    });
+
+    // 获取点击的索引号
+    function getSpanIndex(target) {
+        for( let i=0; i<spanEl.length; i++ ){
+            if( target === spanEl[i] ){
+                return i;
+            }
+        }
+    }
+
+    // 根据索引号下棋
+    function putByIndex(index){
+        // 判断是否可以继续下棋
+        if( flagOver ){
+            return console.log('已经结束啦!胜方是' + (flagPlayer ? 'X' : 'O'));
+        }
+        // 判断坑位是否已被占
+        if( spanEl[index].innerHTML ){
+            return console.log('此坑已被占,无法落子');
+        }
+        // 判断是哪一方下的棋，并填充相应的文字
+        spanEl[index].innerHTML = flagPlayer ? 'X' : 'O';
+        // 根据索引号修改数组中对应的项
+        getChessItem(index);
+        // 判断是否胜利
+        checkWin();
+        // 切换对手
+        flagPlayer = !flagPlayer;
+    }
+
+    // 根据索引号修改数组中对应的项
+    function getChessItem(index) {
+        // X 记为 1 , O 记为 10
+        let val = flagPlayer ? 1 : 10;
+        let tempArr = ['0-0','0-1','0-2','1-0','1-1','1-2','2-0','2-1','2-2'];
+        let search = tempArr[index].split('-');
+        chessArr[ search[0] ][ search[1] ] = val;
+    }
+
+    // 判断是否胜利
+    function checkWin() {
+        let text = flagPlayer ? 'X赢了' : 'O赢了';
+        // 横向判断
+        for( let i=0; i<chessArr.length; i++ ){
+            let total = chessArr[i][0] + chessArr[i][1] + chessArr[i][2];
+            if( [3,30].indexOf( total ) !== -1 ){
+                return console.log(flagOver = true,text);
+            }
+        }
+        // 纵向判断
+        for( let i=0; i<chessArr.length; i++ ){
+            if( [3,30].indexOf( chessArr[0][i] + chessArr[1][i] + chessArr[2][i] ) !== -1 ){
+                return console.log(flagOver = true,text);
+            }
+        }
+        // 左上方 - 右下方判断
+        if( [3,30].indexOf( chessArr[0][0] + chessArr[1][1] + chessArr[2][2] ) !== -1 ){
+            return console.log(flagOver = true,text);
+        }
+        // 左下方 - 右上方判断
+        if( [3,30].indexOf( chessArr[0][2] + chessArr[1][1] + chessArr[2][0] ) !== -1 ){
+            return console.log(flagOver = true,text);
+        }
+        return false;
+    }
+
+</script>
