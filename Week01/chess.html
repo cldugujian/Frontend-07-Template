@@ -102,7 +102,7 @@
         // 判断是哪一方下的棋，并填充相应的文字
         spanEl[index].innerHTML = flagPlayer ? 'X' : 'O';
         // 根据索引号修改数组中对应的项
-        getChessItem(index);
+        setChessItem(index);
         // 判断是否胜利
         checkWin();
         // 切换对手
@@ -110,7 +110,7 @@
     }
 
     // 根据索引号修改数组中对应的项
-    function getChessItem(index) {
+    function setChessItem(index) {
         // X 记为 1 , O 记为 10
         let val = flagPlayer ? 1 : 10;
         let tempArr = ['0-0','0-1','0-2','1-0','1-1','1-2','2-0','2-1','2-2'];
